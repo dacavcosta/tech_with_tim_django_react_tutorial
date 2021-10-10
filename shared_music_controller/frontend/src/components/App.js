@@ -1,15 +1,27 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 
+import HomePage from "./homePage";
+import CreateRoomPage from "./CreteRoomPage";
+import RoomJoinPage from "./RoomJoinPage";
+
 export default class App extends Component {
     constructor(props) {
         super(props);
     }
 
     render () {
-        return <h1>Testing <i>React</i> <u>Code</u></h1>;
+        return (
+            <div>
+                <p>
+                    <h1>Welcome { this.props.name }!!</h1>
+                    <h2>This is a <u>test</u> using <i>React</i><b>JS</b></h2>
+                </p>
+                <HomePage />
+            </div>
+        );
     }
 }
 
 const appDiv = document.getElementById("app");
-render(<App />, appDiv);
+render(<App name="daniel"/>, appDiv);
