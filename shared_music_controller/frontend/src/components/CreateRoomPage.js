@@ -46,9 +46,9 @@ export default class CreateRoomPage extends Component {
                 guest_can_pause: this.state.guestCanPause,
             })            
         };
-        fetch('/api/create-room', requestOptions).then((response)=>
-            response.json()
-        ).then((data) => console.log(data));
+        fetch('/api/create-room', requestOptions)
+        .then((response)=> response.json())
+        .then((data) => this.props.history.push(`/room/${data.code}`));
     }
 
     render() {
@@ -60,25 +60,28 @@ export default class CreateRoomPage extends Component {
             </Grid>
             <Grid item xs={12} align="center">
                 <FormControl component="fieldset">
-                    <FormHelperText>
-                        <div align="center">
-                            Guest control of playback state
-                        </div>
-                    </FormHelperText>
+                    <Typography component='h6' variant='h6'>
+                        Guest can pause
+                    </Typography>
                     <RadioGroup row 
                         defaultValue="true" 
                         onChange={this.handleGuestCanPauseChange}>
                         <FormControlLabel value="true" 
                             control={<Radio color="primary" />}
-                            label="Play/Pause"
+                            label="Yes"
                             labelPlacement="bottom"
                         />
                         <FormControlLabel value="false" 
                             control={<Radio color="secondary" />}
-                            label="Play/Pause"
+                            label=" No"
                             labelPlacement="bottom"
                         />
                     </RadioGroup>
+                    <FormHelperText>
+                        <div align="center">
+                            Guest control of playback state
+                        </div>
+                    </FormHelperText>
                 </FormControl>
             </Grid>
             <Grid item xs={12} align="center">
@@ -106,7 +109,7 @@ export default class CreateRoomPage extends Component {
                 </Button>
             </Grid>
             <Grid item xs={12} align="center">
-                <Button color="secondary" variant="contained" to="/" component={Link}>
+                <Button color="primary" variant="outlined" to="/" component={Link}>
                     Go back
                 </Button>
             </Grid>
