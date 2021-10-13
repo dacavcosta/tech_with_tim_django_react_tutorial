@@ -1,3 +1,4 @@
+from django.http.response import JsonResponse
 from django.shortcuts import render
 from rest_framework import generics, status
 from rest_framework.serializers import Serializer
@@ -72,3 +73,13 @@ class JoinRoomView(APIView):
                 return Response({'message': 'Room Joined!'}, status=status.HTTP_200_OK)
             return Response({'Room not found': 'Invalid Room Code.'}, status=status.HTTP_404_NOT_FOUND)
         return Response({'Bad Request': 'Invalid post data, code parameter not found.'}, status=status.HTTP_400_BAD_REQUEST)
+
+class UserInRoom(APIView):
+    def get(self, request, format=None):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+
+        data = {
+            'code' : self.request.session.get('room_code')
+        }
+        return JsonResponse(data, status=status.HTTP_200_OK)

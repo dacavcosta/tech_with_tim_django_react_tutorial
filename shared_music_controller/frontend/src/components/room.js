@@ -16,7 +16,6 @@ export default class Room extends Component {
         fetch('/api/get-room?code=' + this.roomCode)
         .then((response) => response.json())
         .then((data) => {
-            console.log('data', data);
             this.setState({
                 votesToSkip: data.votes_to_skip,
                 guestcanPause: data.guest_can_pause ? 'Yes' : 'No',
