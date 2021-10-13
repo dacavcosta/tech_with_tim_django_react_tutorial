@@ -12,8 +12,8 @@ export default class App extends Component {
 
     render () {
         return (
-            <div>
-                <p>
+            <div className="center">
+                <p xs={12} align="center">
                     <h1>Welcome { this.props.name }!!</h1>
                     <h2>This is a <u>test</u> using <i>React</i><b>JS</b></h2>
                 </p>
