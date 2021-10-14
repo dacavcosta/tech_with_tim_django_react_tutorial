@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Grid, Button, Typography } from '@material-ui/core';
 
+import CreateRoomPage from './CreateRoomPage';
 export default class Room extends Component {
     constructor(props) {
         super(props);
@@ -14,6 +15,8 @@ export default class Room extends Component {
         this.getRoomDetails();
         this.leaveButtonPressed = this.leaveButtonPressed.bind(this);
         this.updateShowSettings = this.updateShowSettings.bind(this);
+        this.renderSettings = this.renderSettings.bind(this);
+        this.renderSettingsButton = this.renderSettingsButton(this);
     }
 
     getRoomDetails() {
@@ -47,9 +50,30 @@ export default class Room extends Component {
     }
 
     updateShowSettings(value) {
-        this.state({
+        this.setState({
             showSettings: value,
         });
+    }
+
+    renderSettings(){
+        return (
+            <Grid container spacing={1}>
+                <Grid item xs={12} align="center">
+                    <CreateRoomPage 
+                        update={true} 
+                        votesToSkip={ this.state.votesToSkip }
+                        guestcanPause={ this.state.guestcanPause }
+                        roomCode={ this.state.roomCode }
+                        updateCallback={() => {}}
+                    />
+                </Grid>
+                <Grid item xs={12} align="center">
+                    <Button color="primary" variant="outlined" onClick={() => this.updateShowSettings(false)}>
+                        Close
+                    </Button>
+                </Grid>
+            </Grid>
+        );
     }
 
     renderSettingsButton() {
@@ -63,6 +87,10 @@ export default class Room extends Component {
     }
 
     render() {
+        if(this.state.showSettings){
+            return this.renderSettings();
+        }
+
         return <Grid container spacing={1}>
             <Grid item xs={12} align="center">
                 <Typography variant="h6" component="h6">
@@ -84,7 +112,7 @@ export default class Room extends Component {
                     Host: {this.state.isHost.toString()} 
                 </Typography>
             </Grid>
-            {this.state.isHost ? this.renderSettingsButton() : null}
+            {this.state.isHost ? this.renderSettingsButton : null}
             <Grid item xs={12} align="center">
                 <Button variant="contained" color="secondary" onClick = { this.leaveButtonPressed }>
                     Leave Room
