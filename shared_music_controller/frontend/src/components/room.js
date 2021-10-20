@@ -7,19 +7,23 @@ export default class Room extends Component {
         super(props);
         this.state = {
             votesToSkip: 2,
-            guestcanPause: false,
+            guestCanPause: false,
             isHost: false,
             showSettings: false,
         };
         this.roomCode = this.props.match.params.roomCode;
-        this.getRoomDetails();
+        
         this.leaveButtonPressed = this.leaveButtonPressed.bind(this);
         this.updateShowSettings = this.updateShowSettings.bind(this);
         this.renderSettings = this.renderSettings.bind(this);
         this.renderSettingsButton = this.renderSettingsButton(this);
+        this.getRoomDetails = this.getRoomDetails.bind(this);
+
+        this.getRoomDetails();
     }
 
     getRoomDetails() {
+        console.log('getRoomDetails')
         fetch('/api/get-room?code=' + this.roomCode)
     .then((response) => {
         if(!response.ok) {
@@ -31,8 +35,8 @@ export default class Room extends Component {
         .then((data) => {
             this.setState({
                 votesToSkip: data.votes_to_skip,
-                guestcanPause: data.guest_can_pause ? 'Yes' : 'No',
-                isHost: data.is_host ? 'Yes' : 'No',
+                guestCanPause: data.guest_can_pause,
+                isHost: data.is_host,
             });
         });
     }
@@ -56,15 +60,16 @@ export default class Room extends Component {
     }
 
     renderSettings(){
+        console.log("Go to Update", this.state);
         return (
             <Grid container spacing={1}>
                 <Grid item xs={12} align="center">
                     <CreateRoomPage 
                         update={true} 
                         votesToSkip={ this.state.votesToSkip }
-                        guestcanPause={ this.state.guestcanPause }
-                        roomCode={ this.state.roomCode }
-                        updateCallback={() => {}}
+                        guestCanPause={ this.state.guestCanPause }
+                        roomCode={ this.roomCode }
+                        updateCallback={this.getRoomDetails}
                     />
                 </Grid>
                 <Grid item xs={12} align="center">
@@ -104,12 +109,12 @@ export default class Room extends Component {
             </Grid>
             <Grid item xs={12} align="center">
                 <Typography variant="h6" component="h6">
-                    Guest can Pause: {this.state.guestcanPause}
+                    Guest can Pause: {this.state.guestCanPause? "Yes" : "No"}
                 </Typography>
             </Grid>
             <Grid item xs={12} align="center">
                 <Typography variant="h6" component="h6">
-                    Host: {this.state.isHost.toString()} 
+                    Host: {this.state.isHost? "Yes" : "No"} 
                 </Typography>
             </Grid>
             {this.state.isHost ? this.renderSettingsButton : null}
