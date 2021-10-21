@@ -10,6 +10,7 @@ export default class Room extends Component {
             guestCanPause: false,
             isHost: false,
             showSettings: false,
+            spotfyAuthenticated: false,
         };
         this.roomCode = this.props.match.params.roomCode;
         
@@ -18,7 +19,7 @@ export default class Room extends Component {
         this.renderSettings = this.renderSettings.bind(this);
         this.renderSettingsButton = this.renderSettingsButton(this);
         this.getRoomDetails = this.getRoomDetails.bind(this);
-
+        this.authenticateSpotfy = this.authenticateSpotfy.bind(this);
         this.getRoomDetails();
     }
 
@@ -38,6 +39,24 @@ export default class Room extends Component {
                 guestCanPause: data.guest_can_pause,
                 isHost: data.is_host,
             });
+            if(this.state.isHost) {
+                this.authenticateSpotfy();
+            }            
+        });
+    }
+
+    authenticateSpotfy(){
+        fetch('/spotfy/is-authenticated')
+        .then((response) => response.json())
+        .then((data) => {
+            this.setState({ spotfyAuthenticated: data.status});
+            if (!data.status) {
+                fetch('/spotfy/get-auth-url')
+                .then((response) => response.json())
+                .then((data => {
+                    window.location.replace(data.url);
+                }));
+            }
         });
     }
 
