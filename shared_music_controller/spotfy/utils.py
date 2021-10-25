@@ -1,11 +1,14 @@
 from datetime import timedelta
 from django.http import response
 from django.utils import timezone
-from requests import post
+from requests import get, post, put
+from requests.sessions import session
+from rest_framework import status
 from .models import SpotfyToken
 from .creadentials import REDIRECT_URI, CLIENT_SECRET, CLIENT_ID
 
-spotify_api = 'https://accounts.spotify.com/api/token'
+BASE_URL = "https://api.spotify.com/v1/me"
+TOKEN_URL = "https://accounts.spotify.com/api/token"
 
 def get_user_tokens(session_key):
     user_tokens = SpotfyToken.objects.filter(user=session_key)
@@ -47,7 +50,7 @@ def is_spotfy_authenticated(session_key):
 def refresh_spotfy_token(session_key):
     refresh_token = get_user_tokens(session_key).refresh_token
 
-    response = post(spotify_api, data={
+    response = post(TOKEN_URL, data={
         'grant_type': 'refresh_token',
         'refresh_token': refresh_token,
         'client_id': CLIENT_ID,
@@ -60,3 +63,24 @@ def refresh_spotfy_token(session_key):
     refresh_token = response.get('refresh_token')
 
     update_or_create_user_tokens(session_key, access_token, refresh_token, token_type, expires_in)
+
+def execute_spotify_api_request(session_key, endpoint, post_=False, put_=False):
+    tokens = get_user_tokens(session_key)
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer " + tokens.access_token}
+
+    if post_:
+        post(BASE_URL + endpoint, headers=headers)
+    if put_:
+        put(BASE_URL + endpoint, headers=headers)
+
+    print(BASE_URL + endpoint)
+
+    response = get(BASE_URL + endpoint, {}, headers=headers)
+    print(response)
+    s = status.HTTP_204_NO_CONTENT
+    try:
+        return response.json()
+    except:
+        return {'Error': 'Something went wrong with the request.'}

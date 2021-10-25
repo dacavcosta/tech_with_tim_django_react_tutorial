@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Grid, Button, Typography } from '@material-ui/core';
 
 import CreateRoomPage from './CreateRoomPage';
+import MusicPlayer from './MusicPlayer';
+
 export default class Room extends Component {
     constructor(props) {
         super(props);
@@ -11,6 +13,7 @@ export default class Room extends Component {
             isHost: false,
             showSettings: false,
             spotfyAuthenticated: false,
+            song: {}
         };
         this.roomCode = this.props.match.params.roomCode;
         
@@ -20,11 +23,19 @@ export default class Room extends Component {
         this.renderSettingsButton = this.renderSettingsButton(this);
         this.getRoomDetails = this.getRoomDetails.bind(this);
         this.authenticateSpotfy = this.authenticateSpotfy.bind(this);
+        this.getCurrentSong = this.getCurrentSong.bind(this);
         this.getRoomDetails();
     }
 
+    componentDidMount() {
+        this.interval = setInterval(this.getCurrentSong, 1000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
     getRoomDetails() {
-        console.log('getRoomDetails')
         fetch('/api/get-room?code=' + this.roomCode)
     .then((response) => {
         if(!response.ok) {
@@ -57,6 +68,20 @@ export default class Room extends Component {
                     window.location.replace(data.url);
                 }));
             }
+        });
+    }
+
+    getCurrentSong() {
+        fetch('/spotfy/current-song').then((response) => {
+            if (!response.ok){
+                return {};
+            } else {
+                return response.json();
+            }
+        })
+        .then((data) => {
+            this.setState({ song: data })
+            console.log(this.state.song)
         });
     }
 
@@ -121,21 +146,7 @@ export default class Room extends Component {
                     Code: {this.roomCode}
                 </Typography>
             </Grid>
-            <Grid item xs={12} align="center">
-                <Typography variant="h6" component="h6">
-                    Votes: {this.state.votesToSkip}
-                </Typography>
-            </Grid>
-            <Grid item xs={12} align="center">
-                <Typography variant="h6" component="h6">
-                    Guest can Pause: {this.state.guestCanPause? "Yes" : "No"}
-                </Typography>
-            </Grid>
-            <Grid item xs={12} align="center">
-                <Typography variant="h6" component="h6">
-                    Host: {this.state.isHost? "Yes" : "No"} 
-                </Typography>
-            </Grid>
+            <MusicPlayer {...this.state.song}/>
             {this.state.isHost ? this.renderSettingsButton : null}
             <Grid item xs={12} align="center">
                 <Button variant="contained" color="secondary" onClick = { this.leaveButtonPressed }>
