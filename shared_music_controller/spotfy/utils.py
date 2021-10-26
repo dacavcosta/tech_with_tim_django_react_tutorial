@@ -60,7 +60,6 @@ def refresh_spotfy_token(session_key):
     access_token = response.get('access_token')
     token_type = response.get('token_type')
     expires_in = response.get('expires_in')
-    refresh_token = response.get('refresh_token')
 
     update_or_create_user_tokens(session_key, access_token, refresh_token, token_type, expires_in)
 
@@ -75,12 +74,14 @@ def execute_spotify_api_request(session_key, endpoint, post_=False, put_=False):
     if put_:
         put(BASE_URL + endpoint, headers=headers)
 
-    print(BASE_URL + endpoint)
-
     response = get(BASE_URL + endpoint, {}, headers=headers)
-    print(response)
-    s = status.HTTP_204_NO_CONTENT
     try:
         return response.json()
     except:
         return {'Error': 'Something went wrong with the request.'}
+
+def pause_song(session_key):
+    return execute_spotify_api_request(session_key, "/player/pause", put_=True)
+
+def play_song(session_key):
+    return execute_spotify_api_request(session_key, "/player/play", put_=True)
