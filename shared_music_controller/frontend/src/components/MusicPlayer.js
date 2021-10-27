@@ -60,9 +60,12 @@ export default class MusicPlayer extends Component {
                                 {this.props.is_playing ? <PauseIcon /> : <PlayArrowIcon />}
                             </IconButton>
                             <IconButton onClick={() => this.skipSong()}>
-                                <SkipNextIcon />
-                            </IconButton>
+                                <SkipNextIcon /> 
+                            </IconButton>                        
                         </div>
+                        <Typography component="h6" variant="h6">
+                            {this.props.votes} / {this.props.votes_required}
+                        </Typography>    
                     </Grid>
                 </Grid>
                 <LinearProgress variant="determinate" value={ songProgress } />
