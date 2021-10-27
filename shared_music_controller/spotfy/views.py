@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework import response
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from requests import Request, post
+from requests import Request, api, post
 from .creadentials import REDIRECT_URI, CLIENT_SECRET, CLIENT_ID
 from .utils import *
 from api.models import Room
@@ -118,3 +118,15 @@ class PlaySong(APIView):
             return Response({}, status=status.HTTP_204_NO_CONTENT)
 
         return Response({}, status=status.HTTP_403_FORBIDDEN)
+
+class SkipSong(APIView):
+    def post(self, request, format=None):
+        room_code = self.request.session.get('room_code')
+        room = Room.objects.filter(code=room_code)[0]
+
+        if self.request.session.session_key == room.host:
+            skip_song(room.host)
+        else:
+            pass
+
+        return Response({}, status=status.HTTP_204_NO_CONTENT)

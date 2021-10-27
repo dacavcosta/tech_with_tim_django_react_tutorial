@@ -15,6 +15,14 @@ export default class MusicPlayer extends Component {
         super(props);
     }
 
+    skipSong(){
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type' : 'application/json'}
+        }
+        fetch('/spotfy/skip-song', requestOptions);
+    }
+
     pauseSong(){
         const requestOptions = {
             method: 'PUT',
@@ -48,10 +56,10 @@ export default class MusicPlayer extends Component {
                             {this.props.artist}
                         </Typography>
                         <div>
-                            <IconButton onClick={() => this.props.is_playing? this.pauseSong() : this.playSong() }>
+                            <IconButton onClick={() => this.props.is_playing? this.pauseSong() : this.playSong()}>
                                 {this.props.is_playing ? <PauseIcon /> : <PlayArrowIcon />}
                             </IconButton>
-                            <IconButton>
+                            <IconButton onClick={() => this.skipSong()}>
                                 <SkipNextIcon />
                             </IconButton>
                         </div>
