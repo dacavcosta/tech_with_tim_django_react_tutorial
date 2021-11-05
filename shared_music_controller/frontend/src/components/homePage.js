@@ -11,6 +11,7 @@ import { Grid, Button, ButtonGroup, Typography } from '@material-ui/core'
 import CreateRoomPage from './CreateRoomPage';
 import JoinRoomPage from "./JoinRoomPage";
 import Room from './Room';
+import Info from './Info';
 
 export default class HomePage extends Component {
     constructor(props) {
@@ -40,9 +41,12 @@ export default class HomePage extends Component {
                     </Typography>
                 </Grid>
                 <Grid item xs={12} align="center">
-                    <ButtonGroup disableElevation variant="contained" color="primary">
+                    <ButtonGroup disableElevation variant="contained">
                         <Button variant="contained" color="primary" to='/join' component={ Link }>
                             Join a Room
+                        </Button>
+                        <Button variant="contained" color="default" to='/info' component={ Link }>
+                            info
                         </Button>
                         <Button variant="outlined" color="primary" to='/create' component={ Link }>
                             Create a Room
@@ -73,6 +77,7 @@ export default class HomePage extends Component {
                     return <Room {...props} leaveRoomCallback={ this.clearRoomCode } />
                 }}/>
                 <Route path="/create" component={CreateRoomPage}/>
+                <Route path="/info" component={Info} />
                 <Route path="/join" component={JoinRoomPage}/>
             </Switch>
         </Router>;
